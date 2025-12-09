@@ -37,8 +37,8 @@ A simple web app to **track daily activities**, monitor time spent per category,
 ---
 ## Screenshot
 <p float="left">
-  <img src="assets/Screenshot(281).png" width="45%" />
-  <img src="assets/Screenshot(282).png" width="45%" /> 
+  <img src="./assets/Screenshot(281).png" width="45%" />
+  <img src="./assets/Screenshot(282).png" width="45%" /> 
 </p>
 
 
