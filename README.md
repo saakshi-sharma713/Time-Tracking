@@ -50,5 +50,6 @@ A simple web app to **track daily activities**, monitor time spent per category,
 1. **Clone the repo**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
+git clone https://github.com/saakshi-sharma713/Time-Tracking.git
+cd Time-Tracking
+
