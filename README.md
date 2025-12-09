@@ -12,7 +12,7 @@ A simple web app to **track daily activities**, monitor time spent per category,
 
 ## 🎥 Video Walkthrough
 
-[Watch Video Walkthrough](YOUR_VIDEO_LINK_HERE)  
+[Watch Video Walkthrough](https://drive.google.com/file/d/1p7sL26zE2_rQTGUEaRddEnHT4qfJhtVV/view?usp=sharing)  
 *2–5 minutes demo showing main features, dashboard, and analytics.*
 
 ---
