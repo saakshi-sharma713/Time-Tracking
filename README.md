@@ -36,8 +36,11 @@ A simple web app to **track daily activities**, monitor time spent per category,
 
 ---
 ## Screenshot
-![Dashboard Screenshot](assets/Screenshot(281).png)
-![Dashboard Screenshot](assets/Screenshot(282).png)
+<p float="left">
+  <img src="assets/Screenshot(281).png" width="45%" />
+  <img src="assets/Screenshot(282).png" width="45%" /> 
+</p>
+
 
 ## 💻 How to Run Locally
 
