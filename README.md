@@ -6,7 +6,7 @@ A simple web app to **track daily activities**, monitor time spent per category,
 
 ## 🌐 Live Demo
 
-[Click here to view live demo](YOUR_DEPLOYED_LINK_HERE)
+[Click here to view live demo](https://saakshi-sharma713.github.io/Time-Tracking/)
 
 ---
 
