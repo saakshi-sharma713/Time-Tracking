@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracking & Analytics Dashboard</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase Modules (Browser Version) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            getDocs,
+            updateDoc,
+            deleteDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your Firebase config
+       const firebaseConfig = {
+  apiKey: "AIzaSyC5uK-FDQRgwbu8yCEdlW_LungZBAv9sc0",
+  authDomain: "time-tracking-53af4.firebaseapp.com",
+  projectId: "time-tracking-53af4",
+  storageBucket: "time-tracking-53af4.firebasestorage.app",
+  messagingSenderId: "472688493018",
+  appId: "1:472688493018:web:73585730b39a797bcac0e3",
+  measurementId: "G-RD4ZDRZPHX"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        window.GoogleProvider = new GoogleAuthProvider();
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App JS -->
+    <script type="module" src="app.js" defer></script>
+
+</head>
+<body>
+
+<!-- Auth Page -->
+<div id="auth-page" class="page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="card">
+
+                <div class="auth-header">
+                    <h1>Time Tracking</h1>
+                    <p>Track your daily activities and get insights</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="signin">Sign In</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <form class="auth-form active" id="signin-form">
+                    <div id="signin-error"></div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signin-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signin-password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" style="width:100%" onclick="signIn()">Sign In</button>
+                    <button type="button" class="btn btn-secondary" style="width:100%" onclick="signInWithGoogle()">Sign In with Google</button>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form class="auth-form" id="signup-form">
+                    <div id="signup-error"></div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" style="width:100%" onclick="signUp()">Create Account</button>
+                    <button type="button" class="btn btn-secondary" style="width:100%" onclick="signInWithGoogle()">Sign Up with Google</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Page -->
+<div id="dashboard-page" class="page" style="display:none;">
+    <div class="navbar">
+        <div class="navbar-brand">⏱️ TimeTracker</div>
+        <div class="navbar-actions">
+            <div id="user-info">Loading...</div>
+            <button class="btn btn-secondary" onclick="signOut()">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p style="color:var(--text-secondary)">Track your time</p>
+            </div>
+
+            <div class="dashboard-actions">
+                <input type="date" id="current-date">
+                <button class="btn btn-primary" onclick="openModal('activity-modal')">Add Activity</button>
+                <button class="btn btn-secondary" onclick="showPage('analytics-page')">Analytics</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Time Today</div>
+                <div class="stat-value" id="total-minutes">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Remaining Time</div>
+                <div class="stat-value" id="remaining-minutes">1440</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Activities Logged</div>
+                <div class="stat-value" id="activities-count">0</div>
+            </div>
+        </div>
+
+        <div class="card mt-24">
+            <h2>Today's Activities</h2>
+            <div id="activities-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Page -->
+<div id="analytics-page" class="page" style="display:none;">
+    <div class="navbar">
+        <div class="navbar-brand">⏱️ TimeTracker</div>
+        <button class="btn btn-secondary" onclick="showPage('dashboard-page')">← Back</button>
+    </div>
+
+    <div class="container">
+        <h1>Analytics</h1>
+        <input type="date" id="analytics-date">
+
+        <!-- Table -->
+        <table id="analytics-table" style="width:100%; margin-top:16px; border-collapse: collapse; color:white;">
+            <thead>
+                <tr>
+                    <th style="border-bottom:1px solid #555; text-align:left; padding:8px;">Name</th>
+                    <th style="border-bottom:1px solid #555; text-align:left; padding:8px;">Category</th>
+                    <th style="border-bottom:1px solid #555; text-align:left; padding:8px;">Minutes</th>
+                </tr>
+            </thead>
+            <tbody id="analytics-table-body"></tbody>
+        </table>
+
+        <!-- Chart -->
+        <canvas id="analytics-chart" width="300" height="300" style="margin-top:24px;"></canvas>
+    </div>
+</div>
+
+
+</body>
+</html>
